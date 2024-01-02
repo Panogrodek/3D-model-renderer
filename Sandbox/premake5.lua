@@ -7,6 +7,9 @@ project "Sandbox"
 	targetdir "bin/%{cfg.buildcfg}"
     objdir    "bin/obj/%{cfg.buildcfg}"
 	
+	pchheader "pch.h"
+    pchsource "include/pch/pch.cpp"
+	
 	files{
 		"**.h",
 		"**.hpp",
@@ -17,6 +20,8 @@ project "Sandbox"
 	includedirs {
 		"include",
 		"../include",
+		"include/pch",
+		"include/Imgui",
 	}	
 	
 	libdirs {
