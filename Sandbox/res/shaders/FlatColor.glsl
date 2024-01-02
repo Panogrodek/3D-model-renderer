@@ -6,10 +6,12 @@ layout (location = 1) in vec4 a_Color;
 
 out vec4 v_Color;
 
+uniform vec4 u_ViewProjection;
+
 void main()
 {
 	v_Color = a_Color;
-	gl_Position = vec4(a_Position.xyz, 1.0);
+	gl_Position = vec4(u_ViewProjection.xyz + a_Position.xyz, u_ViewProjection.a);
 };
 
 #type fragment
