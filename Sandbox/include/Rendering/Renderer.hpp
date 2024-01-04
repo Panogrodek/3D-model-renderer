@@ -4,25 +4,29 @@
 
 #include "Rendering/Shader.hpp"
 #include "Rendering/VertexArray.hpp"
+#include "Rendering/Camera.hpp"
 
 namespace priv {
 	class Renderer {
 	public:
-		static void InitGL();
-		static void Destroy();
+		void InitGL();
+		void Destroy();
 		
-		static void Draw(const VertexArray* va);
+		void Draw(const VertexArray* va);
+		void SetCamera(const ::Camera& camera);
 
-		static GLFWwindow* const GetWindow();
+		GLFWwindow* const GetWindow();
 
-		static void RenderPass(); //TODO: move into private when Application.hpp exists
+		void RenderPass(); //TODO: move into private when Application.hpp exists
 	private:
-		static void Flush();
+		void Flush();
 
-		static GLFWwindow* s_window;
-		static std::vector<const VertexArray*> s_vertexArrays;
-		static Shader* shader; //this is temporary
+		GLFWwindow* s_window;
+		std::vector<const VertexArray*> s_vertexArrays;
+		Shader* shader; //this is temporary
+
+		::Camera s_currentCamera;
 	};
 }
 
-extern priv::Renderer renderer;
+inline extern priv::Renderer renderer{};

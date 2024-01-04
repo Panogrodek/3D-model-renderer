@@ -13,14 +13,15 @@
 //RENDERING
 #include "Rendering/Shader.hpp"
 #include "Rendering/VertexArray.hpp"
-
+#include "Rendering/Camera.hpp"
+#include "Global.hpp"
 //TODO:
 //vertex buffer --done
 //index buffer --done
 //vertex arrays --done
 //batch rendering -maybe done
 //geometry renderer
-//camera system -currently using imgui
+//camera system -implemented
 //IMGUI --done
 
 
@@ -37,21 +38,94 @@ int main()
     Shader shader("res/shaders/FlatColor.glsl");
     BufferLayout layout({
         { ShaderDataType::Float3, "a_Position" },
-        { ShaderDataType::Float4, "a_Color" },
     });
 
-    float firstTriangle[] = {
-        -0.9f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Left 
-        -0.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, // Right
-        -0.45f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top 
-    };
+    float vertices[] = {
+        //south
+        0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        
+        0.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        
+        //east
+        1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,
+        
+        1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f,
+        //north                                  
+        1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,
+        
+        1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        //west                                   
+        0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 0.0f,
+        
+        0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        //top                                    
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        
+        0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,
+        
+        //bottom                                
+        1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 0.0f,
+        
+        1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+	};
 
-    VertexBuffer* vb = new VertexBuffer(firstTriangle,sizeof(firstTriangle));
+    //float vertices[] = {
+    //    0.f,0.f,0.f,
+    //    0.f,1.f,0.f,
+    //    1.f,1.f,0.f,
+    //    1.f,0.f,0.f,
+    //};
+
+    VertexBuffer* vb = new VertexBuffer(vertices,sizeof(vertices));
     vb->SetLayout(layout);
 
-    uint32_t indicies[] = {
-        0,1,2
+    uint32_t indicies[36] = {
+        0,1,2, //south
+        3,4,5,
+
+        6,7,8, //east
+        9,10,11,
+
+        12,13,14, //north
+        15,16,17,
+
+        18,19,20, //west
+        21,22,23,
+
+        24,25,26, //top
+        27,28,29,
+
+        30,31,32, //bottom
+        33,34,35,
     };
+    //uint32_t indicies[] = {
+    //    0,1,2,
+    //    2,3,0,
+    //};
 
     IndexBuffer* ib = new IndexBuffer(indicies,sizeof(indicies));
 
@@ -61,6 +135,11 @@ int main()
 
     renderer.Draw(&va);
 
+    PerspectiveCamera camera(90.f,float(window::size.x)/float(window::size.y),0.1f,100.f);
+    //OrthographicCamera camera(-2.f,2.f,-2.f,2.f);
+    camera.SetUpAxis({ 0.f,1.0f,0.f });
+    camera.SetPosition({ -5.f,0.f,-5.f });
+    renderer.SetCamera(camera);
     // Game loop
     while (!glfwWindowShouldClose(renderer.GetWindow()))
     {

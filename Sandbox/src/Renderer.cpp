@@ -12,10 +12,6 @@
 
 using namespace priv;
 
-GLFWwindow* Renderer::s_window;
-std::vector<const VertexArray*> Renderer::s_vertexArrays;
-Shader* Renderer::shader;
-
 void Renderer::InitGL()
 {
     // Init GLFW
@@ -72,9 +68,13 @@ void Renderer::Draw(const VertexArray* va)
     s_vertexArrays.push_back(va);
 }
 
+void Renderer::SetCamera(const ::Camera& camera)
+{
+    s_currentCamera = camera;
+}
+
 void Renderer::RenderPass()
 {
-    static glm::vec4 move;
     // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
     glfwPollEvents(); //TODO: this NEEDS to be moved into application.hpp of some sort
 
@@ -86,17 +86,37 @@ void Renderer::RenderPass()
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
-    shader->Bind();
-    shader->SetFloat4("u_ViewProjection", move);
-    shader->Unbind();
+    ImGui::NewFrame();    
     
     Flush();
+    
+    glm::vec3 position = s_currentCamera.GetPosition();
+    float yaw = s_currentCamera.GetYaw();
+    
+    glm::vec3 cameraFront = s_currentCamera.GetDirection();
+    glm::vec3 cameraUp = { 0.f,1.0f,0.f };
+    static float cameraSpeed = 0.025f; // adjust accordingly
+
+    if (glfwGetKey(s_window, GLFW_KEY_W) == GLFW_PRESS)
+        position += cameraSpeed * cameraFront;
+    if (glfwGetKey(s_window, GLFW_KEY_S) == GLFW_PRESS)
+        position -= cameraSpeed * cameraFront;
+    if (glfwGetKey(s_window, GLFW_KEY_A) == GLFW_PRESS)
+        position -= cameraSpeed * cameraUp;
+    if (glfwGetKey(s_window, GLFW_KEY_D) == GLFW_PRESS)
+        position += cameraSpeed * cameraUp;
+    if (glfwGetKey(s_window, GLFW_KEY_Q) == GLFW_PRESS)
+        yaw -= 0.5f;
+    if (glfwGetKey(s_window, GLFW_KEY_E) == GLFW_PRESS)
+        yaw += 0.5f;
+
 
     ImGui::Begin("Demo window");
-    ImGui::SliderFloat4("move",glm::value_ptr(move),0.f,10.f);
+    ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
     ImGui::End();
+
+    //s_currentCamera.SetPosition(position);
+    //s_currentCamera.SetYaw(yaw);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -109,6 +129,8 @@ void Renderer::Flush()
 {
     for (auto& va : s_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
         shader->Bind();
+
+        shader->SetMat4("u_ViewProjection", s_currentCamera.GetViewProjection()); //this could have been done better
 
         //Rendering
         va->Bind();
