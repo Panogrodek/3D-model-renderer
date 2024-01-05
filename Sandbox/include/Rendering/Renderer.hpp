@@ -15,17 +15,21 @@ namespace priv {
 		void Draw(const VertexArray* va);
 		void SetCamera(const ::Camera& camera);
 
+		glm::vec2 GetMousePosition();
+
 		GLFWwindow* const GetWindow();
 
 		void RenderPass(); //TODO: move into private when Application.hpp exists
 	private:
 		void Flush();
 
-		GLFWwindow* s_window;
-		std::vector<const VertexArray*> s_vertexArrays;
+		GLFWwindow* m_window;
+		std::vector<const VertexArray*> m_vertexArrays;
 		Shader* shader; //this is temporary
 
-		::Camera s_currentCamera;
+		glm::vec2 m_mousePos{};
+
+		::Camera m_currentCamera;
 	};
 }
 

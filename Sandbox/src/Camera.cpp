@@ -6,12 +6,6 @@ Camera::Camera()
 {
 }
 
-Camera::Camera(float fovDegrees, float aspectRatio, float znear, float zfar)
-{
-	m_updateCameraTransform = true;
-	m_projection = glm::perspective(glm::radians(fovDegrees), aspectRatio, znear, zfar);
-}
-
 void Camera::SetPosition(const glm::vec3& position)
 {
 	m_position = position;
@@ -129,7 +123,7 @@ void Camera::UpdateCameraTransform()
 	UpdateCameraRotation();
 
 	m_view = glm::lookAt(m_position, m_position + m_direction, m_upAxis);
-	m_viewProjection = m_projection * glm::inverse(m_view);
+	m_viewProjection = m_projection * m_view;
 
 	m_updateCameraTransform = false;
 }

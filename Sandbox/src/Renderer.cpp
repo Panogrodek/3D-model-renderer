@@ -23,8 +23,8 @@ void Renderer::InitGL()
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a GLFWwindow object that we can use for GLFW's functions
-    s_window = glfwCreateWindow(window::size.x, window::size.y, "3D Model Rendering", nullptr, nullptr);
-    glfwMakeContextCurrent(s_window);
+    m_window = glfwCreateWindow(window::size.x, window::size.y, "3D Model Rendering", nullptr, nullptr);
+    glfwMakeContextCurrent(m_window);
 
     //// Set the required callback functions
     //glfwSetKeyCallback(window, key_callback);
@@ -36,8 +36,11 @@ void Renderer::InitGL()
 
     // Define the viewport dimensions
     int width, height;
-    glfwGetFramebufferSize(s_window, &width, &height);
+    glfwGetFramebufferSize(m_window, &width, &height);
     glViewport(0, 0, width, height);
+
+    //mouse input
+    glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     //TODO: temporary
     shader = new Shader("res/shaders/FlatColor.glsl"); 
@@ -65,12 +68,20 @@ void Renderer::Destroy()
 
 void Renderer::Draw(const VertexArray* va)
 {
-    s_vertexArrays.push_back(va);
+    m_vertexArrays.push_back(va);
 }
 
 void Renderer::SetCamera(const ::Camera& camera)
 {
-    s_currentCamera = camera;
+    m_currentCamera = camera;
+}
+
+glm::vec2 priv::Renderer::GetMousePosition()
+{
+    double xpos, ypos;
+    glfwGetCursorPos(m_window, &xpos, &ypos);
+    m_mousePos = glm::vec2(float(xpos), float(ypos));
+    return m_mousePos;
 }
 
 void Renderer::RenderPass()
@@ -90,29 +101,16 @@ void Renderer::RenderPass()
     
     Flush();
     
-    glm::vec3 position = s_currentCamera.GetPosition();
-    float yaw = s_currentCamera.GetYaw();
-    
-    glm::vec3 cameraFront = s_currentCamera.GetDirection();
-    glm::vec3 cameraUp = { 0.f,1.0f,0.f };
-    static float cameraSpeed = 0.025f; // adjust accordingly
-
-    if (glfwGetKey(s_window, GLFW_KEY_W) == GLFW_PRESS)
-        position += cameraSpeed * cameraFront;
-    if (glfwGetKey(s_window, GLFW_KEY_S) == GLFW_PRESS)
-        position -= cameraSpeed * cameraFront;
-    if (glfwGetKey(s_window, GLFW_KEY_A) == GLFW_PRESS)
-        position -= cameraSpeed * cameraUp;
-    if (glfwGetKey(s_window, GLFW_KEY_D) == GLFW_PRESS)
-        position += cameraSpeed * cameraUp;
-    if (glfwGetKey(s_window, GLFW_KEY_Q) == GLFW_PRESS)
-        yaw -= 0.5f;
-    if (glfwGetKey(s_window, GLFW_KEY_E) == GLFW_PRESS)
-        yaw += 0.5f;
+    //glm::vec3 position = m_currentCamera.GetPosition();
+    //float yaw = m_currentCamera.GetYaw();
+    //
+    //glm::vec3 cameraFront = m_currentCamera.GetDirection();
+    //glm::vec3 cameraUp = { 0.f,1.0f,0.f };
+    //static float cameraSpeed = 0.025f; // adjust accordingly
 
 
     ImGui::Begin("Demo window");
-    ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
+    //ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
     ImGui::End();
 
     //s_currentCamera.SetPosition(position);
@@ -127,10 +125,10 @@ void Renderer::RenderPass()
 
 void Renderer::Flush()
 {
-    for (auto& va : s_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
+    for (auto& va : m_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
         shader->Bind();
 
-        shader->SetMat4("u_ViewProjection", s_currentCamera.GetViewProjection()); //this could have been done better
+        shader->SetMat4("u_ViewProjection", m_currentCamera.GetViewProjection()); //this could have been done better
 
         //Rendering
         va->Bind();
@@ -141,10 +139,10 @@ void Renderer::Flush()
         shader->Unbind();
     }
 
-    //s_vertexArrays.clear(); //TODO: uncomment
+    m_vertexArrays.clear(); //TODO: uncomment
 }
 
 GLFWwindow* const Renderer::GetWindow()
 {
-    return s_window;
+    return m_window;
 }
