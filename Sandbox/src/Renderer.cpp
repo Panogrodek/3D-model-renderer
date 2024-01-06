@@ -2,6 +2,8 @@
 #include "Rendering/Renderer.hpp"
 #include "Global.hpp"
 
+#include "Rendering/GeometryRenderer.hpp"
+
 //IMGUI TODO:Move
 #include <imgui.h>
 
@@ -54,6 +56,8 @@ void Renderer::InitGL()
     ImGui_ImplOpenGL3_Init("#version 430");
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+
+    geometryRenderer.Init();
 }
 
 void Renderer::Destroy()
@@ -74,6 +78,11 @@ void Renderer::Draw(const VertexArray* va)
 void Renderer::SetCamera(const ::Camera& camera)
 {
     m_currentCamera = camera;
+}
+
+Camera& Renderer::GetCurrentCamera()
+{
+    return m_currentCamera;
 }
 
 glm::vec2 priv::Renderer::GetMousePosition()
@@ -125,19 +134,21 @@ void Renderer::RenderPass()
 
 void Renderer::Flush()
 {
-    for (auto& va : m_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
-        shader->Bind();
+    //for (auto& va : m_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
 
-        shader->SetMat4("u_ViewProjection", m_currentCamera.GetViewProjection()); //this could have been done better
 
-        //Rendering
-        va->Bind();
-        uint32_t count = va->GetIndexBuffer()->GetCount();
-        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-        va->Unbind();
+    //    //Rendering
+    //    va->Bind();
+    //    uint32_t count = va->GetIndexBuffer()->GetCount();
+    //    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 
-        shader->Unbind();
-    }
+    //    va->Unbind();
+    //}
+    shader->Bind();
+    shader->SetMat4("u_ViewProjection", m_currentCamera.GetViewProjection()); //this could have been done better
+
+    geometryRenderer.Flush();
+    shader->Unbind();
 
     m_vertexArrays.clear(); //TODO: uncomment
 }

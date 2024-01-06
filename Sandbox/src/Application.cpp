@@ -2,112 +2,58 @@
 #include "Core/Application.hpp"
 
 #include "Rendering/Renderer.hpp"
+#include "Rendering/GeometryRenderer.hpp"
 #include "Global.hpp"
+#include "Rendering/ModelLoader.hpp"
 
 Application::Application()
 {
 	renderer.InitGL();
-    va = new VertexArray;
+    //va = new VertexArray;
 
     //TODO: temp
     // Vertex shader
-    Shader shader("res/shaders/FlatColor.glsl");
-    BufferLayout layout({
-        { ShaderDataType::Float3, "a_Position" },
-        });
 
-    float vertices[] = {
-        //south
-        0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
+    //Shader shader("res/shaders/FlatColor.glsl");
+    //BufferLayout layout({
+    //    { ShaderDataType::Float3, "a_Position" },
+    //    { ShaderDataType::Float3, "a_Normal" },
+    //    { ShaderDataType::Float2, "a_TexCoords" },
+    //    { ShaderDataType::Float4, "a_Color" },
+    //    { ShaderDataType::Float,  "a_TexIndex" },
+    //});
 
-        0.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
+    modelLoader.Load("res/obj/teapot.obj","teapot");
 
-        //east
-        1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 1.0f,
+    //VertexBuffer* vb = new VertexBuffer(modelLoader.GetModel("teapot")
+    //    ,sizeof(modelLoader.GetModel("teapot").mesh.vertices.data()));
+    //vb->SetLayout(layout);
 
-        1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 0.0f, 1.0f,
-        //north                                  
-        1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 1.0f,
+    //uint32_t indicies[36] = {
+    //    0,1,2, //south
+    //    3,4,5,
 
-        1.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 1.0f,
-        0.0f, 0.0f, 1.0f,
-        //west                                   
-        0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 0.0f,
+    //    6,7,8, //east
+    //    9,10,11,
 
-        0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-        //top                                    
-        0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
+    //    12,13,14, //north
+    //    15,16,17,
 
-        0.0f, 1.0f, 0.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 0.0f,
+    //    18,19,20, //west
+    //    21,22,23,
 
-        //bottom                                
-        1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 0.0f,
+    //    24,25,26, //top
+    //    27,28,29,
 
-        1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-    };
-
-    //float vertices[] = {
-    //    0.f,0.f,0.f,
-    //    0.f,1.f,0.f,
-    //    1.f,1.f,0.f,
-    //    1.f,0.f,0.f,
+    //    30,31,32, //bottom
+    //    33,34,35,
     //};
 
-    VertexBuffer* vb = new VertexBuffer(vertices, sizeof(vertices));
-    vb->SetLayout(layout);
-
-    uint32_t indicies[36] = {
-        0,1,2, //south
-        3,4,5,
-
-        6,7,8, //east
-        9,10,11,
-
-        12,13,14, //north
-        15,16,17,
-
-        18,19,20, //west
-        21,22,23,
-
-        24,25,26, //top
-        27,28,29,
-
-        30,31,32, //bottom
-        33,34,35,
-    };
-    //uint32_t indicies[] = {
-    //    0,1,2,
-    //    2,3,0,
-    //};
-
-    IndexBuffer* ib = new IndexBuffer(indicies, sizeof(indicies));
+    //IndexBuffer* ib = new IndexBuffer(indicies, sizeof(indicies));
 
 
-    va->AddVertexBuffer(vb);
-    va->SetIndexBuffer(ib);
+    //va->AddVertexBuffer(vb);
+    //va->SetIndexBuffer(ib);
 
     camera = PerspectiveCamera(45.f, float(window::size.x) / float(window::size.y), 0.1f, 100.f);
     //OrthographicCamera camera(-2.f,2.f,-2.f,2.f);
@@ -119,8 +65,7 @@ Application::Application()
 Application::~Application()
 {
     renderer.Destroy();
-
-    delete va; //TODO: remove
+    geometryRenderer.Destroy();
 }
 
 void Application::Run()
@@ -156,8 +101,8 @@ void Application::Update()
 void Application::Render()
 {
     renderer.SetCamera(camera);
-
-    renderer.Draw(va);
+    
+    geometryRenderer.DrawModel(modelLoader.GetModel("teapot"));
 
     renderer.RenderPass();
 }

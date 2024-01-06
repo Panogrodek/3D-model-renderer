@@ -15,6 +15,8 @@ namespace priv {
 		void Draw(const VertexArray* va);
 		void SetCamera(const ::Camera& camera);
 
+		::Camera& GetCurrentCamera();
+
 		glm::vec2 GetMousePosition();
 
 		GLFWwindow* const GetWindow();
@@ -33,4 +35,4 @@ namespace priv {
 	};
 }
 
-inline extern priv::Renderer renderer{};
+inline priv::Renderer renderer{};

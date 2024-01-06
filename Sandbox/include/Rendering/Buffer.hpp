@@ -122,6 +122,8 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
+	void SetData(uint32_t* indicies, uint32_t count);
+
 	uint32_t GetCount() const;
 private:
 	uint32_t m_RendererID;

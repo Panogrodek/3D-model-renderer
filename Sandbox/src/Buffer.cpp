@@ -73,6 +73,13 @@ void IndexBuffer::Unbind() const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+void IndexBuffer::SetData(uint32_t* indicies, uint32_t count)
+{
+	m_Count = count;
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indicies, GL_STATIC_DRAW);
+}
+
 uint32_t IndexBuffer::GetCount() const
 {
 	return m_Count;
