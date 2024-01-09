@@ -19,6 +19,18 @@ inline std::string ErasePart(char symbol, std::string& line)
 
 void ModelLoader::Load(std::string path, std::string modelName)
 {
+	static BufferLayout layout;
+	if (layout.GetElements().empty()) {
+		layout = BufferLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float3, "a_Normal" },
+			{ ShaderDataType::Float2, "a_TexCoords" },
+			{ ShaderDataType::Float4, "a_Color" },
+			{ ShaderDataType::Float,  "a_TexIndex" },
+		});
+	}
+
+
 	if (m_models.find(modelName) != m_models.end())
 		std::cout << "overriding model data at " << modelName << "!\n";
 
@@ -36,6 +48,15 @@ void ModelLoader::Load(std::string path, std::string modelName)
 		Process(line, m_models[modelName]);
 	}
 	file.close();
+
+	auto& model = m_models[modelName];
+	model.vb = new VertexBuffer(model.mesh.vertices.size() * sizeof(Vertex));
+	model.ib = new IndexBuffer(model.mesh.indices.data(), model.mesh.indices.size() * sizeof(uint32_t));
+	model.va = new VertexArray();
+	model.vb->SetLayout(layout);
+	model.vb->SetData(model.mesh.vertices.data(), model.mesh.vertices.size() * sizeof(Vertex));
+	model.va->SetIndexBuffer(model.ib);
+	model.va->AddVertexBuffer(model.vb);
 }
 
 Model& ModelLoader::GetModel(std::string name)

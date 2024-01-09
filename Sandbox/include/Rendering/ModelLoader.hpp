@@ -1,5 +1,6 @@
 #pragma once
 #include <GLM/glm.hpp>
+#include "Rendering/VertexArray.hpp"
 
 inline std::string ErasePart(char symbol, std::string& line);
 
@@ -12,26 +13,33 @@ struct Vertex {
 	float texIndex{}; //TODO: implement or not
 };
 
-//struct Triangle {
-//	Vertex vertices[3];
-//};
-//
-//struct Quad {
-//	Vertex vertices[4];
-//};
-
 struct Mesh {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 	//TODO: add material data
 };
 
+namespace priv {
+	class ModelLoader;
+	class GeometryRenderer;
+}
+
 struct Model { //this can be upgraded to include textures and other things 
-	Mesh mesh;
+	~Model() {
+		if(vb != nullptr) delete vb;
+		if(ib != nullptr) delete ib;
+		if(va != nullptr) delete va;
+	};
 	std::string name;
 
-	//float* GetVertices();
-	//uint32_t GetVerticesSize();
+	glm::mat4 transform{1.0f};
+	VertexArray* va;
+private:
+	friend class priv::ModelLoader;
+	friend class priv::GeometryRenderer;
+	VertexBuffer* vb;
+	IndexBuffer* ib;
+	Mesh mesh;
 };
 
 namespace priv {

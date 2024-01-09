@@ -24,6 +24,8 @@ Application::Application()
     //});
 
     modelLoader.Load("res/obj/teapot.obj","teapot");
+    //modelLoader.Load("res/obj/cube.obj","teapot2"); //dont do this
+    //modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.0f),glm::vec3(10.f,0.f,-10.f));
 
     //VertexBuffer* vb = new VertexBuffer(modelLoader.GetModel("teapot")
     //    ,sizeof(modelLoader.GetModel("teapot").mesh.vertices.data()));
@@ -100,11 +102,14 @@ void Application::Update()
 
 void Application::Render()
 {
-    renderer.SetCamera(camera);
-    
+    renderer.BeginDraw();
+    camera.Bind();
+
     geometryRenderer.DrawModel(modelLoader.GetModel("teapot"));
+    //geometryRenderer.DrawModel(modelLoader.GetModel("teapot2"));
 
     renderer.RenderPass();
+    renderer.EndDraw();
 }
 
 void Application::FixedUpdate()

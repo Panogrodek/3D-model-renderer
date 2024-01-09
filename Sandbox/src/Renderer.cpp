@@ -70,6 +70,38 @@ void Renderer::Destroy()
     ImGui::DestroyContext();
 }
 
+void Renderer::BeginDraw()
+{
+    // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
+    glfwPollEvents(); //TODO: this NEEDS to be moved into application.hpp of some sort
+
+    glClearColor(window::clear_color.r, window::clear_color.g, window::clear_color.b, window::clear_color.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Render
+    // Clear the colorbuffer
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+}
+
+void Renderer::EndDraw()
+{
+    ImGui::Begin("Demo window");
+    //ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
+    ImGui::End();
+
+    //s_currentCamera.SetPosition(position);
+    //s_currentCamera.SetYaw(yaw);
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    // Swap the screen buffers
+    glfwSwapBuffers(renderer.GetWindow());
+}
+
 void Renderer::Draw(const VertexArray* va)
 {
     m_vertexArrays.push_back(va);
@@ -95,18 +127,7 @@ glm::vec2 priv::Renderer::GetMousePosition()
 
 void Renderer::RenderPass()
 {
-    // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
-    glfwPollEvents(); //TODO: this NEEDS to be moved into application.hpp of some sort
-
-    glClearColor(window::clear_color.r, window::clear_color.g, window::clear_color.b, window::clear_color.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Render
-    // Clear the colorbuffer
-
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();    
+    
     
     Flush();
     
@@ -116,20 +137,6 @@ void Renderer::RenderPass()
     //glm::vec3 cameraFront = m_currentCamera.GetDirection();
     //glm::vec3 cameraUp = { 0.f,1.0f,0.f };
     //static float cameraSpeed = 0.025f; // adjust accordingly
-
-
-    ImGui::Begin("Demo window");
-    //ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
-    ImGui::End();
-
-    //s_currentCamera.SetPosition(position);
-    //s_currentCamera.SetYaw(yaw);
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    // Swap the screen buffers
-    glfwSwapBuffers(renderer.GetWindow());
 }
 
 void Renderer::Flush()
@@ -146,8 +153,6 @@ void Renderer::Flush()
     //}
     shader->Bind();
     shader->SetMat4("u_ViewProjection", m_currentCamera.GetViewProjection()); //this could have been done better
-
-    geometryRenderer.Flush();
     shader->Unbind();
 
     m_vertexArrays.clear(); //TODO: uncomment

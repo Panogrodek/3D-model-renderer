@@ -12,6 +12,9 @@ namespace priv {
 		void InitGL();
 		void Destroy();
 		
+		void BeginDraw();
+		void EndDraw();
+
 		void Draw(const VertexArray* va);
 		void SetCamera(const ::Camera& camera);
 

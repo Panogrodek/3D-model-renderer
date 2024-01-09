@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Rendering/Camera.hpp"
+#include "Rendering/Renderer.hpp"
 #include "Global.hpp"
 
 Camera::Camera()
@@ -95,6 +96,11 @@ void Camera::SetViewProjection(const glm::mat4& viewProjection)
 {
 	m_viewProjection = viewProjection;
 	m_updateCameraTransform = true;
+}
+
+void Camera::Bind()
+{
+	renderer.SetCamera(*this);
 }
 
 const glm::mat4& Camera::GetView()

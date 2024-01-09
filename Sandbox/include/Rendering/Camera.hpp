@@ -33,6 +33,8 @@ public:
 	void SetProjection(const glm::mat4& projection);
 	void SetViewProjection(const glm::mat4& viewProjection);
 
+	void Bind();
+
 	const glm::mat4& GetView();
 	const glm::mat4& GetProjection();
 	const glm::mat4& GetViewProjection(); //we use this for shaders
