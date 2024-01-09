@@ -43,6 +43,9 @@ void Renderer::InitGL()
 
     //mouse input
     glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //TODO: temporary
     shader = new Shader("res/shaders/FlatColor.glsl"); 
@@ -88,12 +91,12 @@ void Renderer::BeginDraw()
 
 void Renderer::EndDraw()
 {
+    glm::vec3 position = modelLoader.GetModel("teapot").transform[3];
     ImGui::Begin("Demo window");
-    //ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
+    ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
     ImGui::End();
 
-    //s_currentCamera.SetPosition(position);
-    //s_currentCamera.SetYaw(yaw);
+    modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.f), position);
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

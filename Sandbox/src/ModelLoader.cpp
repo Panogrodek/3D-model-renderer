@@ -47,6 +47,7 @@ void ModelLoader::Load(std::string path, std::string modelName)
 			continue;
 		Process(line, m_models[modelName]);
 	}
+	vertexNormalsIndex = 0;
 	file.close();
 
 	auto& model = m_models[modelName];
@@ -78,8 +79,9 @@ void ModelLoader::Process(std::string line, Model& model)
 		model.mesh.vertices.push_back(v);
 		break;
 	case 'vn': //TODO: this propably does not work like this
-		model.mesh.vertices.back().normal = 
+		model.mesh.vertices[vertexNormalsIndex].normal =
 			glm::vec3{std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line)};
+		vertexNormalsIndex++;
 		break;
 	case 'vt': //TODO: same here
 		model.mesh.vertices.back().texCoords =

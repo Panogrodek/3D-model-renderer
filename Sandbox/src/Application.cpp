@@ -23,8 +23,8 @@ Application::Application()
     //    { ShaderDataType::Float,  "a_TexIndex" },
     //});
 
-    modelLoader.Load("res/obj/teapot.obj","teapot");
-    //modelLoader.Load("res/obj/cube.obj","teapot2"); //dont do this
+    //modelLoader.Load("res/obj/teapot.obj","teapot");
+    modelLoader.Load("res/obj/cube.obj","teapot"); //dont do this
     //modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.0f),glm::vec3(10.f,0.f,-10.f));
 
     //VertexBuffer* vb = new VertexBuffer(modelLoader.GetModel("teapot")

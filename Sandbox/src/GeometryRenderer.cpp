@@ -48,8 +48,10 @@ void GeometryRenderer::Init()
 void GeometryRenderer::DrawModel(Model& model)
 {
     m_GeometryShader->Bind();
-    m_GeometryShader->SetMat4("u_ViewProjection", renderer.GetCurrentCamera().GetViewProjection()); 
+    auto& camera = renderer.GetCurrentCamera();
+    m_GeometryShader->SetMat4("u_ViewProjection", camera.GetViewProjection()); 
     m_GeometryShader->SetMat4("u_Transform", model.transform); 
+    m_GeometryShader->SetFloat3("u_LightDir",{0.f,1.5f,0.f});
 
     model.va->Bind();
     uint32_t count = model.va->GetIndexBuffer()->GetCount();

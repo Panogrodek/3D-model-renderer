@@ -6,7 +6,7 @@ inline std::string ErasePart(char symbol, std::string& line);
 
 struct Vertex {
 	glm::vec3 position{};
-	glm::vec3 normal{}; //TODO: implement
+	glm::vec3 normal{0.f,0.f,1.f}; //TODO: implement
 	glm::vec2 texCoords{}; //TODO: implement
 
 	glm::vec4 color{}; //TODO: debug only
@@ -50,7 +50,7 @@ namespace priv {
 		Model& GetModel(std::string name);
 	private:
 		void Process(std::string line, Model& model);
-
+		int vertexNormalsIndex = 0;
 		std::unordered_map<std::string, Model> m_models;
 	};
 }
