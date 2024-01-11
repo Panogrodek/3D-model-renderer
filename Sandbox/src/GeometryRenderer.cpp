@@ -18,8 +18,10 @@ void GeometryRenderer::DrawModel(Model& model)
     m_GeometryShader->SetFloat3("u_LightDir", lightDirection);
 
     model.va->Bind();
+    model.ib->Bind();
     uint32_t count = model.va->GetIndexBuffer()->GetCount();
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+    model.ib->Unbind();
     model.va->Unbind();
 
     m_GeometryShader->Unbind();

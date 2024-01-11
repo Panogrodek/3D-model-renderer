@@ -33,7 +33,7 @@ void CameraController::UpdateMouse(Camera& camera)
     float yaw = camera.GetYaw();
     float pitch = camera.GetPitch();
 
-    glm::vec2 offset = mousePos - glm::vec2(window::size);
+    glm::vec2 offset = mousePos - glm::vec2(window::size/2u);
 
     offset *= m_mouseSensitivity * dt;
     
@@ -89,5 +89,5 @@ void CameraController::UpdateKeyboard(Camera& camera)
 
 void CameraController::LockMouseCursorPos()
 {
-    glfwSetCursorPos(renderer.GetWindow(),double(window::size.x),double(window::size.y));
+    glfwSetCursorPos(renderer.GetWindow(),double(window::size.x/2.f),double(window::size.y/2.f));
 }
