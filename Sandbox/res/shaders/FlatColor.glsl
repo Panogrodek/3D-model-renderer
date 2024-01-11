@@ -33,8 +33,8 @@ void main()
 {
 	vec3 norm = normalize(v_Normal);
 	vec3 dir = normalize(v_LightDir - v_FragPos);
-	float diff = max(dot(norm,dir),0.0);
+	float diff = max(dot(norm,dir),0.25);
 	vec3 light = diff * vec3(1.0,1.0,1.0);
-	//color = vec4(light.xyz,1.0);
-	color = vec4(1.0);
+	color = vec4(light.xyz,1.0);
+	//color = vec4(1.0);
 };

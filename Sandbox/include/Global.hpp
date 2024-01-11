@@ -8,3 +8,5 @@ namespace window {
 
 inline float dt{};
 inline float fdt{};
+
+inline glm::vec3 lightDirection{ 0.f,1.5f,0.f };

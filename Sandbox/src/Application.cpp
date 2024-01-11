@@ -9,56 +9,11 @@
 Application::Application()
 {
 	renderer.InitGL();
-    //va = new VertexArray;
-
-    //TODO: temp
-    // Vertex shader
-
-    //Shader shader("res/shaders/FlatColor.glsl");
-    //BufferLayout layout({
-    //    { ShaderDataType::Float3, "a_Position" },
-    //    { ShaderDataType::Float3, "a_Normal" },
-    //    { ShaderDataType::Float2, "a_TexCoords" },
-    //    { ShaderDataType::Float4, "a_Color" },
-    //    { ShaderDataType::Float,  "a_TexIndex" },
-    //});
-
-    //modelLoader.Load("res/obj/teapot.obj","teapot");
-    modelLoader.Load("res/obj/cube.obj","teapot"); //dont do this
-    //modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.0f),glm::vec3(10.f,0.f,-10.f));
-
-    //VertexBuffer* vb = new VertexBuffer(modelLoader.GetModel("teapot")
-    //    ,sizeof(modelLoader.GetModel("teapot").mesh.vertices.data()));
-    //vb->SetLayout(layout);
-
-    //uint32_t indicies[36] = {
-    //    0,1,2, //south
-    //    3,4,5,
-
-    //    6,7,8, //east
-    //    9,10,11,
-
-    //    12,13,14, //north
-    //    15,16,17,
-
-    //    18,19,20, //west
-    //    21,22,23,
-
-    //    24,25,26, //top
-    //    27,28,29,
-
-    //    30,31,32, //bottom
-    //    33,34,35,
-    //};
-
-    //IndexBuffer* ib = new IndexBuffer(indicies, sizeof(indicies));
-
-
-    //va->AddVertexBuffer(vb);
-    //va->SetIndexBuffer(ib);
+    //modelLoader.Load("res/obj/cube.obj","cube");
+    modelLoader.Load("res/obj/cube.obj","pyramid");
+    //modelLoader.GetModel("cube").transform = glm::translate(glm::mat4(1.0f), {0.f,-2.5f,0.f});
 
     camera = PerspectiveCamera(45.f, float(window::size.x) / float(window::size.y), 0.1f, 100.f);
-    //OrthographicCamera camera(-2.f,2.f,-2.f,2.f);
     camera.SetUpAxis({ 0.f,1.0f,0.f });
     camera.SetPosition({ 0.f,0.f,-5.f });
     camera.SetYaw(90.f);
@@ -105,10 +60,9 @@ void Application::Render()
     renderer.BeginDraw();
     camera.Bind();
 
-    geometryRenderer.DrawModel(modelLoader.GetModel("teapot"));
-    //geometryRenderer.DrawModel(modelLoader.GetModel("teapot2"));
+    geometryRenderer.DrawModel(modelLoader.GetModel("pyramid"));
+    //geometryRenderer.DrawModel(modelLoader.GetModel("cube"));
 
-    renderer.RenderPass();
     renderer.EndDraw();
 }
 

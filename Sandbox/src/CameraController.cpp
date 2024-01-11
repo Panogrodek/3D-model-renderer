@@ -85,10 +85,6 @@ void CameraController::UpdateKeyboard(Camera& camera)
         position -= m_cameraSpeed * cameraUp * fdt;
 
     camera.SetPosition(position);
-    //if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-    //    yaw -= 0.5f;
-    //if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-    //    yaw += 0.5f;
 }
 
 void CameraController::LockMouseCursorPos()

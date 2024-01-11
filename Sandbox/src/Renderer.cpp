@@ -4,13 +4,14 @@
 
 #include "Rendering/GeometryRenderer.hpp"
 
-//IMGUI TODO:Move
+//IMGUI TODO:Move/not to implement
 #include <imgui.h>
 
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
 #include <GLM/gtc/type_ptr.hpp>
+#include <GLM/gtx/euler_angles.hpp>
 
 using namespace priv;
 
@@ -47,9 +48,6 @@ void Renderer::InitGL()
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    //TODO: temporary
-    shader = new Shader("res/shaders/FlatColor.glsl"); 
-
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -67,7 +65,7 @@ void Renderer::Destroy()
 {
     glfwTerminate();
 
-    //TODO: move
+    //TODO: move /not to implement
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -91,23 +89,13 @@ void Renderer::BeginDraw()
 
 void Renderer::EndDraw()
 {
-    glm::vec3 position = modelLoader.GetModel("teapot").transform[3];
-    ImGui::Begin("Demo window");
-    ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
-    ImGui::End();
-
-    modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.f), position);
+    UpdateImguiPosition();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     // Swap the screen buffers
     glfwSwapBuffers(renderer.GetWindow());
-}
-
-void Renderer::Draw(const VertexArray* va)
-{
-    m_vertexArrays.push_back(va);
 }
 
 void Renderer::SetCamera(const ::Camera& camera)
@@ -128,37 +116,23 @@ glm::vec2 priv::Renderer::GetMousePosition()
     return m_mousePos;
 }
 
-void Renderer::RenderPass()
+void Renderer::UpdateImguiPosition()
 {
-    
-    
-    Flush();
-    
-    //glm::vec3 position = m_currentCamera.GetPosition();
-    //float yaw = m_currentCamera.GetYaw();
-    //
-    //glm::vec3 cameraFront = m_currentCamera.GetDirection();
-    //glm::vec3 cameraUp = { 0.f,1.0f,0.f };
-    //static float cameraSpeed = 0.025f; // adjust accordingly
-}
+    glm::vec3 position = modelLoader.GetModel("pyramid").transform[3];
+    glm::vec3& scale = modelLoader.GetModel("pyramid").scale;
+    glm::vec3& rotation = modelLoader.GetModel("pyramid").rotation;
 
-void Renderer::Flush()
-{
-    //for (auto& va : m_vertexArrays) { //this is not a batch rendering approach, this needs to be fixed
+    ImGui::Begin("Demo window");
+    ImGui::SliderFloat3("position", glm::value_ptr(position), -10.f, 10.f);
+    ImGui::SliderFloat3("scale", glm::value_ptr(scale), -10.f, 10.f);
+    ImGui::SliderFloat3("rotation", glm::value_ptr(rotation), -10.f, 10.f);
+    ImGui::End();
 
+    glm::mat4 rot = glm::eulerAngleYXZ(rotation.y, rotation.x, rotation.z);
+    glm::mat4 translate = glm::translate(glm::mat4(1.f), position) * rot;
+    glm::mat4 transform = glm::scale(translate, scale);
 
-    //    //Rendering
-    //    va->Bind();
-    //    uint32_t count = va->GetIndexBuffer()->GetCount();
-    //    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-
-    //    va->Unbind();
-    //}
-    shader->Bind();
-    shader->SetMat4("u_ViewProjection", m_currentCamera.GetViewProjection()); //this could have been done better
-    shader->Unbind();
-
-    m_vertexArrays.clear(); //TODO: uncomment
+    modelLoader.GetModel("pyramid").transform = transform;
 }
 
 GLFWwindow* const Renderer::GetWindow()

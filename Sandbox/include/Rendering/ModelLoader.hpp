@@ -6,11 +6,11 @@ inline std::string ErasePart(char symbol, std::string& line);
 
 struct Vertex {
 	glm::vec3 position{};
-	glm::vec3 normal{0.f,0.f,1.f}; //TODO: implement
-	glm::vec2 texCoords{}; //TODO: implement
+	glm::vec3 normal{0.f,0.f,1.f}; //TODO: implement /not to implement
+	glm::vec2 texCoords{}; //TODO: implement /not to implement
 
-	glm::vec4 color{}; //TODO: debug only
-	float texIndex{}; //TODO: implement or not
+	glm::vec4 color{}; //TODO: debug only /not to implement
+	float texIndex{}; //TODO: implement /not to implement
 };
 
 struct Mesh {
@@ -24,7 +24,7 @@ namespace priv {
 	class GeometryRenderer;
 }
 
-struct Model { //this can be upgraded to include textures and other things 
+struct Model { //this can be upgraded to include textures and other things /not to implement
 	~Model() {
 		if(vb != nullptr) delete vb;
 		if(ib != nullptr) delete ib;
@@ -33,6 +33,8 @@ struct Model { //this can be upgraded to include textures and other things
 	std::string name;
 
 	glm::mat4 transform{1.0f};
+	glm::vec3 rotation{ 0.f };
+	glm::vec3 scale{ 1.0f };
 	VertexArray* va;
 private:
 	friend class priv::ModelLoader;

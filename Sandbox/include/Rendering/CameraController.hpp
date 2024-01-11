@@ -6,7 +6,6 @@ public:
 	void Update(Camera& camera);
 	void UpdateMouse(Camera& camera);
 	void UpdateKeyboard(Camera& camera);
-		
 private:
 	void LockMouseCursorPos();
 	float m_cameraSpeed = 0.1f;
