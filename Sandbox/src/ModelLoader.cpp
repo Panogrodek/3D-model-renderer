@@ -70,30 +70,85 @@ Model& ModelLoader::GetModel(std::string name)
 void ModelLoader::Process(std::string line, Model& model)
 {
 	std::string symbol = ErasePart(' ',line);
+	if(symbol.length() > 1)
+		symbol.erase(symbol.length() - 1);
 	Vertex v{};
-	switch (symbol[0])
-	{
-	case '#':
+
+	if (symbol == "#")
 		return;
-	case 'v':
-		v.position = glm::vec3{std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line)};
+	else if (symbol == "v") {
+		v.position = glm::vec3{ std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line) };
 		model.mesh.vertices.push_back(v);
-		break;
-	case 'vn': //TODO: this propably does not work like this
+	}
+	else if (symbol == "vn") {
 		model.mesh.vertices[vertexNormalsIndex].normal =
-			glm::vec3{std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line)};
+			glm::vec3{ std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line) };
 		vertexNormalsIndex++;
-		break;
-	case 'vt': //TODO: same here
+	}
+	else if (symbol == "vt") {
 		model.mesh.vertices.back().texCoords =
 			glm::vec2{ std::stof(ErasePart(' ',line)),std::stof(line) };
-		break;
-	case 'f':
-		model.mesh.indices.push_back(std::stoi(ErasePart(' ', line)) - 1);
-		model.mesh.indices.push_back(std::stoi(ErasePart(' ', line)) - 1);
-		model.mesh.indices.push_back(std::stoi(line) - 1);
-		break;
-	default:
-		break;
 	}
+	else if (symbol == "f") {
+		ProcessFace(line, model);
+	}
+
+	//switch (symbol[0])
+	//{
+	//case '#':
+	//	return;
+	//case 'v':
+	//	v.position = glm::vec3{std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line)};
+	//	model.mesh.vertices.push_back(v);
+	//	break;
+	//case 'vn': //TODO: this propably does not work like this
+	//	model.mesh.vertices[vertexNormalsIndex].normal =
+	//		glm::vec3{std::stof(ErasePart(' ',line)),std::stof(ErasePart(' ',line)),std::stof(line)};
+	//	vertexNormalsIndex++;
+	//	break;
+	//case 'vt': //TODO: same here
+	//	model.mesh.vertices.back().texCoords =
+	//		glm::vec2{ std::stof(ErasePart(' ',line)),std::stof(line) };
+	//	break;
+	//case 'f':
+	//	ProcessFace(line,model);
+	//	break;
+	//default:
+	//	break;
+	//}
+}
+
+void ModelLoader::ProcessFace(std::string line, Model& model)
+{
+	std::string baseIndex = ErasePart(' ', line);
+	std::string prevIndex = ErasePart(' ', line);
+	std::string currIndex = ErasePart(' ', line);
+	if (currIndex == "") {
+		currIndex = line;
+		line = "";
+	}
+	while (currIndex != "") {
+		AddIndex(baseIndex,model);
+		AddIndex(prevIndex,model);
+		AddIndex(currIndex,model);
+
+		prevIndex = currIndex;
+		currIndex = ErasePart(' ', line);
+		if (currIndex == "") {
+			currIndex = line;
+			line = "";
+		}
+	}
+}
+
+void ModelLoader::AddIndex(std::string index, Model& model)
+{
+	int tokenIndex = index.find_first_of('/');
+	if (tokenIndex == std::string::npos) {
+		model.mesh.indices.push_back(std::stoi(index) - 1);
+		return;
+	}
+	
+	std::string final = index.substr(0, tokenIndex);
+	model.mesh.indices.push_back(std::stoi(final) - 1);
 }

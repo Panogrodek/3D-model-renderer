@@ -9,8 +9,8 @@
 Application::Application()
 {
 	renderer.InitGL();
-    modelLoader.Load("res/obj/pyramid.obj","pyramid");
     modelLoader.Load("res/obj/cube.obj","cube");
+    modelLoader.Load("res/obj/pyramid.obj","pyramid");
     modelLoader.Load("res/obj/teapot.obj","teapot");
     modelLoader.GetModel("cube").transform = glm::translate(glm::mat4(1.0f), {0.f,-2.5f,0.f});
     modelLoader.GetModel("teapot").transform = glm::translate(glm::mat4(1.0f), {5.f,2.5f,5.f});

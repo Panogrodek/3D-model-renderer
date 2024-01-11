@@ -36,12 +36,12 @@ struct Model { //this can be upgraded to include textures and other things /not 
 	glm::vec3 rotation{ 0.f };
 	glm::vec3 scale{ 1.0f };
 	VertexArray* va;
+	Mesh mesh;
 private:
 	friend class priv::ModelLoader;
 	friend class priv::GeometryRenderer;
 	VertexBuffer* vb;
 	IndexBuffer* ib;
-	Mesh mesh;
 };
 
 namespace priv {
@@ -52,6 +52,9 @@ namespace priv {
 		Model& GetModel(std::string name);
 	private:
 		void Process(std::string line, Model& model);
+		void ProcessFace(std::string line, Model& model);
+
+		void AddIndex(std::string index, Model& model);
 		int vertexNormalsIndex = 0;
 		std::unordered_map<std::string, Model> m_models;
 	};
