@@ -1,6 +1,7 @@
 # 3D model renderer
  An openGL 3d model rendering framework, made for College
 ![text](https://github.com/Panogrodek/3D-model-renderer/blob/main/repo/demo.png?raw=true)
+![text](https://github.com/Panogrodek/3D-model-renderer/blob/main/repo/demo_multiple.png?raw=true)
 
 # How to install
 1. Download repository
